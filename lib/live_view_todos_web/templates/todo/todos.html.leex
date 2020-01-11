@@ -1,0 +1,14 @@
+<form action="#" phx-submit="add">
+  <%= text_input :todo, :title, placeholder: "What do you want to get done?" %>
+  <%= submit "Add", phx_disable_with: "Adding..." %>
+</form>
+
+<%= for todo <- @todos do %>
+<div>
+  <%= checkbox(:todo, :done, phx_click: "toggle_done", phx_value_id: todo.id, value: todo.done) %>
+  <%= todo.pos %>
+  <%= todo.title %>
+  <button phx-click="move_to_start" phx_value_id="todo.id" value="<%= todo.id %>">start</button>
+  <button phx-click="move_to_end" phx_value_id="todo.id" value="<%= todo.id %>">end</button>
+</div>
+<% end %>

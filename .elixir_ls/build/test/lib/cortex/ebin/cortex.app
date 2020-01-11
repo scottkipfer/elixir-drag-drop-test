@@ -1,0 +1,11 @@
+{application,cortex,
+             [{applications,[kernel,stdlib,elixir,logger,file_system]},
+              {description,"Cortex is the intelligent coding assistant for Elixir."},
+              {modules,['Elixir.Cortex','Elixir.Cortex.Application',
+                        'Elixir.Cortex.Controller',
+                        'Elixir.Cortex.Controller.Stage',
+                        'Elixir.Cortex.FileWatcher','Elixir.Cortex.Reloader',
+                        'Elixir.Cortex.TestRunner']},
+              {registered,[]},
+              {vsn,"0.5.0"},
+              {mod,{'Elixir.Cortex.Application',[]}}]}.
