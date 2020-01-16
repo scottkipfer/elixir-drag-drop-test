@@ -1,14 +1,16 @@
-<form action="#" phx-submit="add">
-  <%= text_input :todo, :title, placeholder: "What do you want to get done?" %>
-  <%= submit "Add", phx_disable_with: "Adding..." %>
+<div>
+<form action="#" phx-submit="add" class="mb-4">
+  <%= text_input :todo, :title, placeholder: "What do you want to get done?", class: "mb-4 bg-white focus:outline-none focus:shadow-outline border border-gray-300 rounded-lg py-2 px-4 block w-full appearance-none leading-normal" %>
+  <%= submit "Add", phx_disable_with: "Adding...", class: "px-4 py-1 bg-blue-600 rounded" %>
 </form>
 
-<%= for todo <- @todos do %>
-<div>
-  <%= checkbox(:todo, :done, phx_click: "toggle_done", phx_value_id: todo.id, value: todo.done) %>
-  <%= todo.pos %>
-  <%= todo.title %>
-  <button phx-click="move_to_start" phx_value_id="todo.id" value="<%= todo.id %>">start</button>
-  <button phx-click="move_to_end" phx_value_id="todo.id" value="<%= todo.id %>">end</button>
+<ul class="list-group">
+  <%= for todo <- @todos do %>
+  <li class="border rounded py-1 px-2 mb-2 bg-white" phx-hook="draggable_hook" draggable="true" id="<%= todo.id %>">
+    <%= checkbox(:todo, :done, phx_click: "toggle_done", phx_value_id: todo.id, value: todo.done, class: "mr-4") %>
+    <span class="mr-4"><%= todo.pos %></span>
+    <%= todo.title %>
+  </li>
+  <% end %>
+<ul>
 </div>
-<% end %>

@@ -1,2 +1,4 @@
-<h1>Todo List</h1>
+<div class="p-4">
+<h1 class="pb-4 text-2xl">Todo List</h1>
 <%= live_render(@conn, LiveViewTodosWeb.TodoLive) %>
+</div>
