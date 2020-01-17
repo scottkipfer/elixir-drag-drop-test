@@ -120,7 +120,10 @@ defmodule LiveViewTodos.Todos do
 
   """
   def delete_todo(%Todo{} = todo) do
+  Repo.transaction(fn ->
     Repo.delete(todo)
+    from(t in Todo, where: t.pos > ^todo.pos) |> Repo.update_all(inc: [pos: -1])
+  end)
     |> broadcast_change([:todo, :deleted])
   end
 
@@ -136,4 +139,23 @@ defmodule LiveViewTodos.Todos do
   def change_todo(%Todo{} = todo) do
     Todo.changeset(todo, %{})
   end
+
+  def move_after(%Todo{} = startTodo, %Todo{} = endTodo) do
+    Repo.transaction(fn ->
+      from(t in Todo, where: t.pos > ^endTodo.pos) |> Repo.update_all(inc: [pos: 1])
+      update_todo(startTodo, %{pos: endTodo.pos + 1})
+      from(t in Todo, where: t.pos > ^startTodo.pos) |> Repo.update_all(inc: [pos: -1])
+    end)
+    |> broadcast_change([:todo, :moved])
+  end
+
+  def move_before(%Todo{} = startTodo, %Todo{} = endTodo) do
+    Repo.transaction(fn ->
+      from(t in Todo, where: t.pos >= ^endTodo.pos) |> Repo.update_all(inc: [pos: 1])
+      update_todo(startTodo, %{pos: endTodo.pos})
+      from(t in Todo, where: t.pos > ^startTodo.pos) |> Repo.update_all(inc: [pos: -1])
+    end)
+    |> broadcast_change([:todo, :moved])
+  end
+
 end

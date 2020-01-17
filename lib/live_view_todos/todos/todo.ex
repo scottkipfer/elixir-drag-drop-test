@@ -5,7 +5,7 @@ defmodule LiveViewTodos.Todos.Todo do
   schema "todos" do
     field :done, :boolean, default: false
     field :title, :string
-    field :pos, :float
+    field :pos, :integer
 
     timestamps()
   end

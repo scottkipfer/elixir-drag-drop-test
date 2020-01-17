@@ -19,37 +19,52 @@ import "phoenix_html"
 
 import { Socket } from "phoenix"
 import LiveSocket from "phoenix_live_view"
+import { polyfill } from "mobile-drag-drop"
+polyfill();
 
 let Hooks = {};
 
 Hooks.draggable_hook = {
   mounted() {
     this.el.addEventListener("dragstart", e => {
-      e.dataTransfer.setData('text/plain', e.target.id);
-
-      console.log('we be draggin', e.target.id);
+      let data = JSON.stringify({id: e.target.id, pos: e.target.attributes.pos.value});
+      e.dataTransfer.setData('text/plain', data);
     });
-    this.el.addEventListener("dragover", e => {
-      e.preventDefault();
-      console.log('we be over', e.target.id);
-    });
+    this.el.addEventListener("dragover", e => { e.preventDefault();});
     this.el.addEventListener("dragenter", e => {
-        this.el.classList.add("border-blue-500")
+      e.preventDefault();
+      this.el.classList.add("border-blue-500")
     })
     this.el.addEventListener("dragleave", e => {
-        this.el.classList.remove("border-blue-500")
+      this.el.classList.remove("border-blue-500")
     })
     this.el.addEventListener("drop", e => {
       if (e.stopPropagation) e.stopPropagation(); // Stops some browsers from redirecting.
-      
-
-      let startId = e.dataTransfer.getData('text/plain');
-      console.log('we be droppin ' + startId + ' => ' + e.target.id);
+      let { id, pos } = JSON.parse(e.dataTransfer.getData('text/plain'));
+      let dropId = e.target.id;
+      let dropPos = e.target.attributes.pos.value;
       this.el.classList.remove("border-blue-500")
 
+      console.log('we be droppin ' + id + '(' +  pos + ')' + ' => ' + dropId + '(' + dropPos +')');
+
+      if (pos !== dropPos) {
+        pos < dropPos 
+          ?
+          this.pushEvent("move_after", {
+            "startId": id,
+            "endId": dropId
+          })
+          : 
+          this.pushEvent("move_before", {
+            "startId": id,
+            "endId": dropId
+          })
+      }
+
     }, false);
-  }
+  },
 }
+
 
 let liveSocket = new LiveSocket("/live", Socket, {hooks: Hooks})
 liveSocket.connect()

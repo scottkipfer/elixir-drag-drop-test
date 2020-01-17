@@ -6,10 +6,13 @@
 
 <ul class="list-group">
   <%= for todo <- @todos do %>
-  <li class="border rounded py-1 px-2 mb-2 bg-white" phx-hook="draggable_hook" draggable="true" id="<%= todo.id %>">
+  <li class="border rounded py-1 px-2 mb-2 bg-white flex flex-row" phx-hook="draggable_hook" draggable="true" id="<%= todo.id %>" pos="<%= todo.pos %>">
     <%= checkbox(:todo, :done, phx_click: "toggle_done", phx_value_id: todo.id, value: todo.done, class: "mr-4") %>
     <span class="mr-4"><%= todo.pos %></span>
+    <span class="mr-4"><%= todo.id %></span>
     <%= todo.title %>
+    <span class="flex-1"></span>
+    <a class="cursor-pointer" phx-click="delete_todo" phx-value-id="<%= todo.id %>" value="<%= todo.id %>"> x </a>
   </li>
   <% end %>
 <ul>

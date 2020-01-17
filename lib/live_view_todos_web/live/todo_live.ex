@@ -1,5 +1,6 @@
 defmodule LiveViewTodosWeb.TodoLive do
   use Phoenix.LiveView
+  require Logger
 
   alias LiveViewTodos.Todos
   alias LiveViewTodosWeb.TodoView
@@ -9,6 +10,7 @@ defmodule LiveViewTodosWeb.TodoLive do
 
     {:ok, fetch(socket)}
   end
+
 
   def render(assigns)  do
     TodoView.render("todos.html", assigns)
@@ -41,6 +43,30 @@ defmodule LiveViewTodosWeb.TodoLive do
     if todo.pos != (first_pos + 1) do
       Todos.update_todo(todo, %{pos: first_pos})
     end
+    {:noreply, socket}
+  end
+
+  def handle_event("move_before", %{"startId" => startId, "endId" => endId}, socket) do
+    startTodo = Todos.get_todo!(startId)
+    endTodo = Todos.get_todo!(endId)
+    Todos.move_before(startTodo, endTodo)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("move_after", %{"startId" => startId, "endId" => endId}, socket) do
+    startTodo = Todos.get_todo!(startId)
+    endTodo = Todos.get_todo!(endId)
+    Todos.move_after(startTodo, endTodo)
+
+    {:noreply, socket}
+  end
+
+  def handle_event("delete_todo", %{"id" => id}, socket) do
+    todo = Todos.get_todo!(id)
+    Todos.delete_todo(todo)
+    {:noreply, socket}
+
     {:noreply, socket}
   end
 
